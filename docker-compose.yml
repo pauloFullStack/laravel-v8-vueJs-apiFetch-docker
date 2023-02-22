@@ -1,0 +1,54 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: sammy
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: php-v8.1
+    environment:
+      - APP_DIR=${APP_DIR}
+    container_name: laravel-sanctum-api-app
+    restart: unless-stopped
+    working_dir: ${APP_DIR}
+    volumes:
+      - ./:${APP_DIR}
+      - ./resources/js:/var/www/resources/js
+    env_file:
+      - .env
+    networks:
+      - laravel-sanctum-api
+
+  db:
+    image: mysql:5.7
+    container_name: laravel-sanctum-api-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker-compose/mysql/data:/var/lib/mysql
+    networks:
+      - laravel-sanctum-api
+
+  nginx:
+    image: nginx:alpine
+    container_name: laravel-sanctum-api-nginx
+    restart: unless-stopped
+    ports:
+      - 8002:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - laravel-sanctum-api
+
+networks:
+  laravel-sanctum-api:
+    driver: bridge
