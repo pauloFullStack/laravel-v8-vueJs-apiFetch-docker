@@ -138,6 +138,10 @@ export default {
         addArticle() {
             if (this.edit === false) {
                 // Add
+                if (this.article.title == "" || this.article.body == "") {
+                    alert("Preencha todos os campos!");
+                    return;
+                }
                 fetch("api/article", {
                     method: "post",
                     body: JSON.stringify(this.article),

@@ -17742,6 +17742,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this3 = this;
       if (this.edit === false) {
         // Add
+        if (this.article.title == "" || this.article.body == "") {
+          alert("Preencha todos os campos!");
+          return;
+        }
         fetch("api/article", {
           method: "post",
           body: JSON.stringify(this.article),
