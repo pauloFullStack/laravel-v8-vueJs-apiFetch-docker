@@ -2,13 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Article;
 use Illuminate\Http\Request;
-use App\Http\Requests;
+use App\Services\ArticleService;
 use App\Http\Resources\Article as ArticleResource;
 
 class ArticleController extends Controller
 {
+
+    /**
+     * @var ArticleService
+     */
+    protected $articleService;
+
+
+    public function __construct(ArticleService $articleService)
+    {
+        $this->articleService = $articleService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,11 +27,8 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        // Get articles
-        $articles = Article::orderBy('created_at', 'desc')->paginate(5);
-
         // Return collection of articles as a resource
-        return ArticleResource::collection($articles);
+        return ArticleResource::collection($this->articleService->all());
     }
 
     /**
@@ -31,16 +39,9 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        $article = $request->isMethod('put') ? Article::findOrFail($request->article_id) : new Article;
-
-        $article->id = $request->input('article_id');
-        $article->title = $request->input('title');
-        $article->body = $request->input('body');
-
-        if ($article->save()) {
-            return new ArticleResource($article);
-        }
+        return new ArticleResource($this->articleService->store($request));
     }
+
 
     /**
      * Display the specified resource.
@@ -50,11 +51,8 @@ class ArticleController extends Controller
      */
     public function show($id)
     {
-        // Get article
-        $article = Article::findOrFail($id);
-
         // Return single article as a resource
-        return new ArticleResource($article);
+        return new ArticleResource($this->articleService->show($id));
     }
 
     /**
@@ -65,11 +63,7 @@ class ArticleController extends Controller
      */
     public function destroy($id)
     {
-        // Get article
-        $article = Article::findOrFail($id);
-
-        if ($article->delete()) {
-            return new ArticleResource($article);
-        }
+        // Delete article
+        return new ArticleResource($this->articleService->delete($id));
     }
 }
