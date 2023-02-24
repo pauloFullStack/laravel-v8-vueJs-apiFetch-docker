@@ -22,7 +22,7 @@ class Article extends JsonResource
 
         return [
             'version' => '1.0.0',
-            'autho_url' => url('https://phpgold.com.br/curriculum')
+            'autho_url' => url('https://paulorenatodev.com/')
         ];
 
     }
