@@ -32,3 +32,4 @@ sudo docker exec -it laravel-sanctum-api-app php artisan db:seed
 http://localhost:8002/
 
 ```
+Teste
